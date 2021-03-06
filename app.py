@@ -37,7 +37,7 @@ def versions(namespace, name,provider):
 #Download Specific Version :namespace/:name/:provider/:version/download
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/download', methods=['GET'])
 def downloadversion(namespace, name,provider,version):
-    filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/" + version  + "/" + provider + ".zip"
+    filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/" + version  + "/" + "local.zip"
     file = f'./local.zip'
     if not path.exists(filepath):
         abort(404)
