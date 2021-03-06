@@ -1,5 +1,5 @@
 import json
-from flask import Flask, abort,current_app, flash, jsonify, make_response#, redirect, request, url_for
+from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file#, redirect, request, url_for
 from os import path
 
 
@@ -12,32 +12,31 @@ def discovery():
 #Get Versions
 @app.route('/v1/modules/<namespace>/<name>/<provider>/versions', methods=['GET'])
 def versions(namespace, name,provider):
-    filepath = 'module/' + namespace + "/" + name + "/" + provider + ".json"
+    filepath = './module/' + namespace + "/" + name + "/" + provider + ".json"
 
     if not path.exists(filepath):
         abort(404)
 
     with open(filepath) as reader:
         data = json.load(reader)
-   # response = { "modules" : [] }
-    # for elem in data["modules"]:
-    #     versions = {"version": elem["version"], "protocols": elem["protocols"], "platforms": []}
-    #     # for platform in elem["platforms"]:
-    #     #     version["platforms"].append({"os": platform["os"], "arch": platform["arch"]})
-    #    # response["versions"].append(version)
     return data
 
 #Download Specific Version :namespace/:name/:provider/:version/download
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/download', methods=['GET'])
 def downloadversion(namespace, name,provider,version):
-    filepath = 'module/' + namespace + "/" + name + "/" + provider + "/" + version  + "/" + provider + ".zip"
-
+    filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/" + version  + "/" + provider + ".zip"
+    file = f'./local.zip'
     if not path.exists(filepath):
         abort(404)
-
-    # with open(filepath) as reader:
-    #     data = json.load(reader)
     response = make_response('', 204 )
     response.mimetype = current_app.config['JSONIFY_MIMETYPE']
-    response.headers['X-Terraform-Get'] = filepath
+    response.headers['X-Terraform-Get'] = file
     return response
+
+#need to actually 
+@app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/local.zip', methods=['GET'])
+def downloadfile(namespace, name,provider,version):
+    filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/" + version  + "/" + "local.zip"
+    if not path.exists(filepath):
+        abort(404)
+    return send_file(filepath)
