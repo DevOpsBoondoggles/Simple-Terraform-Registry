@@ -12,8 +12,8 @@ def discovery():
 #Get Versions
 @app.route('/v1/modules/<namespace>/<name>/<provider>/versions', methods=['GET'])
 def versions(namespace, name,provider):
-    filepath = './module/' + namespace + "/" + name + "/" + provider + ".json"
-
+    filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + ".json"
+   
     if not path.exists(filepath):
         abort(404)
 
