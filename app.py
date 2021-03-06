@@ -10,7 +10,7 @@ app = Flask(__name__)
 def discovery():
     return {"modules.v1": "/v1/modules/"}
 
-#Get Versions.
+#Get Versions
 @app.route('/v1/modules/<namespace>/<name>/<provider>/versions', methods=['GET'])
 def versions(namespace, name,provider):
     filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/"
