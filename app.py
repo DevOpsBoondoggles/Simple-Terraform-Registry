@@ -1,4 +1,5 @@
 import json
+import versiongetter
 from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file#, redirect, request, url_for
 from os import path
 
@@ -12,14 +13,29 @@ def discovery():
 #Get Versions
 @app.route('/v1/modules/<namespace>/<name>/<provider>/versions', methods=['GET'])
 def versions(namespace, name,provider):
-    filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + ".json"
-   
+    filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/"
     if not path.exists(filepath):
         abort(404)
+    data = versiongetter.folderlist(filepath)
 
-    with open(filepath) as reader:
-        data = json.load(reader)
-    return data
+    # with open(filepath) as reader:
+    #     data = json.load(reader)
+    x = '''
+    {
+        "modules": [
+        {
+                "versions": [
+                ]
+        }
+        ]
+    }
+    '''
+    y =  json.loads(x)  
+    #data2 = json.dumps(x)
+    for module in y['modules']:
+            for ver in data:
+                module['versions'].append({'version' : ver})
+    return  json.dumps(y)
 
 #Download Specific Version :namespace/:name/:provider/:version/download
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/download', methods=['GET'])

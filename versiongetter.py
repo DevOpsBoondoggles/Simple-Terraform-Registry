@@ -2,13 +2,12 @@ import os
 
 def folderlist(filepath):
     dirList = os.listdir(filepath) # current directory
+    dirOnly = []
     for dir in dirList:
         dirPath = f'{filepath}/{dir}'
         if os.path.isdir(dirPath) == True:
-            if not dir.startswith("."):
-               print(dir)
+            if not dir.startswith("."): 
+                dirOnly.append(dir)
+    return dirOnly
 
-folderlist("./module/unittest/versionget/local")
 
-    #  else:
-    # I got file and i can regexp if it is .htm|html
