@@ -16,10 +16,7 @@ def versions(namespace, name,provider):
     filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/"
     if not path.exists(filepath):
         abort(404)
-    data = versiongetter.folderlist(filepath)
-
-    # with open(filepath) as reader:
-    #     data = json.load(reader)
+    
     x = '''
     {
         "modules": [
@@ -30,11 +27,11 @@ def versions(namespace, name,provider):
         ]
     }
     '''
-    y =  json.loads(x)  
-    #data2 = json.dumps(x)
+    y =  json.loads(x)  #turn string above json python object
+    data = versiongetter.folderlist(filepath) #get all the directories (the version folders)
     for module in y['modules']:
             for ver in data:
-                module['versions'].append({'version' : ver})
+                module['versions'].append({'version' : ver}) #dig in and loop into versions
     return  json.dumps(y)
 
 #Download Specific Version :namespace/:name/:provider/:version/download
