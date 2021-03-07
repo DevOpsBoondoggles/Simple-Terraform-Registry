@@ -46,7 +46,7 @@ def downloadversion(namespace, name,provider,version):
     response.headers['X-Terraform-Get'] = file
     return response
 
-#need to actually 
+#need to actually download the file when called by Terraform.
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/local.zip', methods=['GET'])
 def downloadfile(namespace, name,provider,version):
     filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/" + version  + "/" + "local.zip"
