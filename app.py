@@ -16,9 +16,9 @@ def discovery():
 #Get Versions
 @app.route('/v1/modules/<namespace>/<name>/<provider>/versions', methods=['GET'])
 def versions(namespace, name,provider):
-    filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/"
-    if not path.exists(filepath):
-        abort(404)
+    # filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/"
+    # if not path.exists(filepath):
+    #     abort(404)
     return BlobVersionsGet(azblobstoragehost,azcontainer,namespace,name,provider)
 
 #Download Specific Version :namespace/:name/:provider/:version/download
@@ -28,9 +28,9 @@ def downloadversion(namespace, name,provider,version):
     # request = requests.get(blobpath)
     # if request.status_code >= 400:
     #     abort(404)
-    # response = make_response('', 204 )
-    # response.mimetype = current_app.config['JSONIFY_MIMETYPE']
-    # response.headers['X-Terraform-Get'] = blobpath
+    response = make_response('', 204 )
+    response.mimetype = current_app.config['JSONIFY_MIMETYPE']
+    response.headers['X-Terraform-Get'] = blobpath
     return f'{blobpath}'
     
 #need to actually send the file
