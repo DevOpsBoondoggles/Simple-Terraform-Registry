@@ -25,13 +25,13 @@ def versions(namespace, name,provider):
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/download', methods=['GET'])
 def downloadversion(namespace, name,provider,version):
     blobpath = f'{azblobstoragehost}/{azcontainer}/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
-    request = requests.get(blobpath)
-    if request.status_code >= 400:
-        abort(404)
-    response = make_response('', 204 )
-    response.mimetype = current_app.config['JSONIFY_MIMETYPE']
-    response.headers['X-Terraform-Get'] = blobpath
-    return response
+    # request = requests.get(blobpath)
+    # if request.status_code >= 400:
+    #     abort(404)
+    # response = make_response('', 204 )
+    # response.mimetype = current_app.config['JSONIFY_MIMETYPE']
+    # response.headers['X-Terraform-Get'] = blobpath
+    return f'{blobpath}'
     
 #need to actually send the file
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/local.zip', methods=['GET'])
