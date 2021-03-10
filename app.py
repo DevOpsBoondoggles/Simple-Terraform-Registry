@@ -1,11 +1,12 @@
 import json
+import requests
 import versiongetter
 from AzureBlobBackend import BlobVersionsGet
-from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file#, redirect, request, url_for
+from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file, redirect#, request, url_for
 from os import path
 
 app = Flask(__name__)
-azblobstoragehost = "https://terrreggm.blob.core.windows.net/"
+azblobstoragehost = "https://terrreggm.blob.core.windows.net"
 azcontainer = "terrregistryblob"
 #Service Discovery
 @app.route('/.well-known/terraform.json', methods=['GET'])
@@ -20,10 +21,24 @@ def versions(namespace, name,provider):
         abort(404)
     return BlobVersionsGet(azblobstoragehost,azcontainer,namespace,name,provider)
 
+#Download Specific Version :namespace/:name/:provider/:version/download
+@app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/download', methods=['GET'])
+def downloadversion(namespace, name,provider,version):
+    blobpath = f'{azblobstoragehost}/{azcontainer}/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
+    request = requests.get(blobpath)
+    if request.status_code >= 400:
+        abort(404)
+    response = make_response('', 204 )
+    response.mimetype = current_app.config['JSONIFY_MIMETYPE']
+    response.headers['X-Terraform-Get'] = blobpath
+    return response
+
+
 #need to actually send the file
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/local.zip', methods=['GET'])
 def downloadfile(namespace, name,provider,version):
     filepath = f'{azblobstoragehost}/{azcontainer}/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
-    if not path.exists(filepath):
+    request = requests.get(filepath)
+    if request.status_code >= 400:
         abort(404)
-    return send_file(filepath)
+    return redirect(filepath)

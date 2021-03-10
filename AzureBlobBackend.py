@@ -1,4 +1,5 @@
 from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobClient
 from azure.storage.blob import ContainerClient
 import json
 import re
@@ -13,4 +14,3 @@ def BlobVersionsGet(host,container,namespace,name,provider):
             ver = (re.search(r'[0-9].[0-9].[0-9]', blob.name).group())
             module['versions'].append({'version' : ver}) #dig in and loop into versions
     return  json.dumps(y)
-
