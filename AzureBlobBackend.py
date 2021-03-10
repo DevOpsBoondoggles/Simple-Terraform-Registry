@@ -1,5 +1,4 @@
 from azure.storage.blob import BlobServiceClient
-from azure.storage.blob import BlobClient
 from azure.storage.blob import ContainerClient
 import json
 import re
