@@ -20,10 +20,10 @@ def versions(namespace, name,provider):
         abort(404)
     return BlobVersionsGet(azblobstoragehost,azcontainer,namespace,name,provider)
 
-#need to actually 
+#need to actually send the file
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/local.zip', methods=['GET'])
 def downloadfile(namespace, name,provider,version):
-    filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/" + version  + "/" + "local.zip"
+    filepath = f'{azblobstoragehost}/{azcontainer}/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
     if not path.exists(filepath):
         abort(404)
     return send_file(filepath)
