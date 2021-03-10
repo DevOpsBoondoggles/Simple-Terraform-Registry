@@ -32,13 +32,8 @@ def downloadversion(namespace, name,provider,version):
     response.mimetype = current_app.config['JSONIFY_MIMETYPE']
     response.headers['X-Terraform-Get'] = blobpath
     return response
-
-<<<<<<< HEAD
-#need to actually download the file when called by Terraform.
-=======
-
+    
 #need to actually send the file
->>>>>>> azurerm
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/local.zip', methods=['GET'])
 def downloadfile(namespace, name,provider,version):
     filepath = f'{azblobstoragehost}/{azcontainer}/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
