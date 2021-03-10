@@ -19,7 +19,8 @@ def versions(namespace, name,provider):
     # filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/"
     # if not path.exists(filepath):
     #     abort(404)
-    return BlobVersionsGet(azblobstoragehost,azcontainer,namespace,name,provider)
+    response = BlobVersionsGet(azblobstoragehost,azcontainer,namespace,name,provider)
+    return f'{response}'
 
 #Download Specific Version :namespace/:name/:provider/:version/download
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/download', methods=['GET'])
