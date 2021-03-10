@@ -10,16 +10,7 @@ provider = "local"
 name_start = f"v1/modules/{namespace}/{name}/{provider}"
 container_client = ContainerClient(uri, container, credential=None)
 blobs_list = container_client.list_blobs(name_starts_with=name_start)
-x = '''
-    {
-        "modules": [
-        {
-                "versions": [
-                ]
-        }
-        ]
-    }
-    '''
+x = '{"modules": [{"versions": []}]}'
 y =  json.loads(x)  #turn string above json python object
 for module in y['modules']:
     for blob in blobs_list:
