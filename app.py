@@ -2,6 +2,7 @@ import json
 import requests
 import versiongetter
 import shutil
+import os
 import tempfile #1
 from test import BlobDownloadAuthN
 from azure.storage.blob import BlobClient
@@ -32,7 +33,7 @@ def versions(namespace, name,provider):
 #Download Specific Version :namespace/:name/:provider/:version/download
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/download', methods=['GET'])
 def downloadversion(namespace, name,provider,version):
-    blobpath = f'{azblobstoragehost}/{azcontainer}/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
+    blobpath = f'/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
     response = make_response('', 204 )
     response.mimetype = current_app.config['JSONIFY_MIMETYPE']
     response.headers['X-Terraform-Get'] = blobpath
@@ -41,9 +42,6 @@ def downloadversion(namespace, name,provider,version):
 #need to actually send the file
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/local.zip', methods=['GET'])
 def downloadfile(namespace, name,provider,version):
-    # filepath = f'{azblobstoragehost}/{azcontainer}/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
-    # blobpath = f'/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
-    #filestream = BlobDownloadAuthN(azblobstoragehost,azcontainer,namespace,name,provider,version)
     bloburl = f'{azblobstoragehost}/{azcontainer}/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
     token_credential = DefaultAzureCredential()
     blob_client = BlobClient.from_blob_url(bloburl, credential=token_credential)  
@@ -59,6 +57,9 @@ def downloadfile(namespace, name,provider,version):
 
 #Get Versions
 @app.route('/v1/modules/cleartemp', methods=['GET'])
-def versions(namespace, name,provider):
-    shutil.rmtree(./temp)
+def cleartemp():
+    dir = 'temp'
+    shutil.rmtree(dir)
+    os.makedirs(dir)
+    open(f'{dir}/placeholder.txt',"w+")
     return f'cleared temp'
