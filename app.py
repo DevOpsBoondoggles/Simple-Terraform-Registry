@@ -49,7 +49,7 @@ def downloadfile(namespace, name,provider,version):
     # create a temporary directory using the context manager
     #f = tempfile.TemporaryDirectory(dir = "temp")
     f = tempfile.mkdtemp(dir = "temp") #this one works
-    with open(f'{f}\local.zip', "wb") as my_blob:
+    with open(f'{f}/local.zip', "wb") as my_blob:
         download_stream = blob_client.download_blob()
         my_blob.write(download_stream.readall())
     return send_file(f'{my_blob.name}')
