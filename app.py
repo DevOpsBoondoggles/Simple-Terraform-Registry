@@ -47,19 +47,19 @@ def downloadfile(namespace, name,provider,version):
     blob_client = BlobClient.from_blob_url(bloburl, credential=token_credential)  
     download_stream = blob_client.download_blob()
     # create a temporary directory using the context manager
-    #f = tempfile.TemporaryDirectory(dir = "temp")
-    f = tempfile.mkdtemp(dir = "temp") #this one works
+    f = tempfile.TemporaryDirectory(dir = "temp")
+    #f = tempfile.mkdtemp(dir = "temp") #this one works
     with open(f'{f}/local.zip', "wb") as my_blob:
         download_stream = blob_client.download_blob()
         my_blob.write(download_stream.readall())
     return send_file(f'{my_blob.name}')
      
 
-#Get Versions
-@app.route('/v1/modules/cleartemp', methods=['GET'])
-def cleartemp():
-    dir = 'temp'
-    shutil.rmtree(dir)
-    os.makedirs(dir)
-    open(f'{dir}/placeholder.txt',"w+")
-    return f'cleared temp'
+# #Get Versions
+# @app.route('/v1/modules/cleartemp', methods=['GET'])
+# def cleartemp():
+#     dir = 'temp'
+#     shutil.rmtree(dir)
+#     os.makedirs(dir)
+#     open(f'{dir}/placeholder.txt',"w+")
+#     return f'cleared temp'
