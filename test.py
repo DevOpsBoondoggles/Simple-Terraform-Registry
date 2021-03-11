@@ -19,8 +19,8 @@ def BlobSASUri(host,account,container,namespace, name,provider,version):
     token_credential = DefaultAzureCredential()
     #create a blob service with either the local dev environment variables or system managed identity
     blob_service = BlobServiceClient(host, credential=token_credential) 
-    start_utc = datetime.now(timezone.utc) - timedelta(minutes=1)
-    end_utc = datetime.now(timezone.utc) + timedelta(minutes=1)
+    start_utc = datetime.now(timezone.utc) - timedelta(seconds=10)
+    end_utc = datetime.now(timezone.utc) + timedelta(seconds=10)
     u_d_key= blob_service.get_user_delegation_key(start_utc, end_utc,timeout = 20)
     sasPerm = BlobSasPermissions(read=True,tag=False)
     blobsas = generate_blob_sas(account, container, blob, user_delegation_key=u_d_key, permission=sasPerm, expiry=end_utc, start=start_utc)
