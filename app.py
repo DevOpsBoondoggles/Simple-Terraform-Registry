@@ -1,21 +1,24 @@
 import json
-import requests
-import versiongetter
-import shutil
 import os
-import tempfile #1
-from test import BlobDownloadAuthN,BlobSASUri
-from azure.storage.blob import BlobClient
-from azure.storage.blob import ContainerClient
+from azure.storage.blob import BlobClient,ContainerClient
 from azure.identity import DefaultAzureCredential
-from AzureBlobBackend import BlobVersionsGet,BlobVersionsGetAuthN
-from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file, redirect#, request, url_for
-from os import path
-
+from AzureBlobBackend import BlobVersionsGet,BlobVersionsGetAuthN,BlobDownloadAuthN,BlobSASUri
+from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file, redirect
 
 app = Flask(__name__)
-azblobstoragehost = "https://terrreggm.blob.core.windows.net"
-azcontainer = "terrregistryblob"
+
+#These need set if you're using azure backend 
+azblobaccountname = os.environ.get("AZBLOBACCOUNTNAME") #blobaccount
+azblobstoragehost = os.environ.get("AZBLOBSTORAGEHOST") #the full url "https://blobaccount.blob.core.windows.net"
+azcontainer = os.environ.get("AZCONTAINER")
+modulebackend = os.environ.get("MODULEBACKEND") #azureblob or local
+
+if modulebackend == 'azureblob':
+    az_env_variables = [azblobstoragehost,azblobaccountname,azcontainer]
+    for envvar in az_env_variables:
+        if not envvar:
+            raise ValueError(f'missing Azure environment variable')
+
 #Service Discovery
 @app.route('/.well-known/terraform.json', methods=['GET'])
 def discovery():
@@ -42,5 +45,5 @@ def downloadversion(namespace, name,provider,version):
 #need to actually send the file
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/local.zip', methods=['GET'])
 def downloadfile(namespace, name,provider,version):
-    sasuri = BlobSASUri(azblobstoragehost,'terrreggm',azcontainer, namespace,name,provider,version)
+    sasuri = BlobSASUri(azblobstoragehost,azblobaccountname,azcontainer, namespace,name,provider,version)
     return redirect(sasuri)
