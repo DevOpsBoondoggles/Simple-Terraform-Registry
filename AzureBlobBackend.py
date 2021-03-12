@@ -1,20 +1,39 @@
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobClient,ContainerClient,BlobServiceClient,generate_blob_sas,BlobSasPermissions
-from azure.identity import DefaultAzureCredential
+from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file, redirect
 from datetime import datetime,timezone,timedelta
 import json
 import re
 
-
-def BlobDownloadAuthN(host,container,namespace, name,provider,version):
-    # blobpath = f'/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
-    bloburl = f'{host}/{container}/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
+def VersionGet(host,container,namespace,name,provider):   
     token_credential = DefaultAzureCredential()
-    blob_client = BlobClient.from_blob_url(bloburl, credential=token_credential)  
-    download_stream = blob_client.download_blob()
-    return download_stream
+    name_start = f"v1/modules/{namespace}/{name}/{provider}"
+    container_client = ContainerClient(host, container, credential=token_credential)
+    blobs_list = container_client.list_blobs(name_starts_with=name_start)
+    x = '{"modules": [{"versions": []}]}'
+    y =  json.loads(x)  #turn string above json python object
+    for module in y['modules']:
+        for blob in blobs_list:
+            ver = (re.search(r'[0-9].[0-9].[0-9]', blob.name).group())
+            module['versions'].append({'version' : ver}) #dig in and loop into versions
+    return  json.dumps(y)
 
-def BlobSASUri(host,account,container,namespace, name,provider,version):
+def XHeader(namespace, name,provider,version):
+    blobpath = f'/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
+    response = make_response('', 204 )
+    response.mimetype = current_app.config['JSONIFY_MIMETYPE']
+    response.headers['X-Terraform-Get'] = blobpath
+    return response
+
+# def DownloadFile(host,container,namespace, name,provider,version):
+#     # blobpath = f'/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
+#     bloburl = f'{host}/{container}/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
+#     token_credential = DefaultAzureCredential()
+#     blob_client = BlobClient.from_blob_url(bloburl, credential=token_credential)  
+#     download_stream = blob_client.download_blob()
+#     return download_stream
+
+def DownloadFile(host,account,container,namespace, name,provider,version):
     blob = f'v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
     bloburl = f'{host}/{container}/{blob}'
     azblobaccount = '' #need a way to pull this from the host
@@ -29,31 +48,20 @@ def BlobSASUri(host,account,container,namespace, name,provider,version):
     return f'{bloburl}?{blobsas}'
 
 
-def BlobVersionsGet(host,container,namespace,name,provider):    
-    name_start = f"v1/modules/{namespace}/{name}/{provider}"
-    container_client = ContainerClient(host, container, credential=None)
-    blobs_list = container_client.list_blobs(name_starts_with=name_start)
-    x = '{"modules": [{"versions": []}]}'
-    y =  json.loads(x)  #turn string above json python object
-    for module in y['modules']:
-        for blob in blobs_list:
-            ver = (re.search(r'[0-9].[0-9].[0-9]', blob.name).group())
-            module['versions'].append({'version' : ver}) #dig in and loop into versions
-    return  json.dumps(y)
+# def BlobVersionsGet(host,container,namespace,name,provider):    
+#     name_start = f"v1/modules/{namespace}/{name}/{provider}"
+#     container_client = ContainerClient(host, container, credential=None)
+#     blobs_list = container_client.list_blobs(name_starts_with=name_start)
+#     x = '{"modules": [{"versions": []}]}'
+#     y =  json.loads(x)  #turn string above json python object
+#     for module in y['modules']:
+#         for blob in blobs_list:
+#             ver = (re.search(r'[0-9].[0-9].[0-9]', blob.name).group())
+#             module['versions'].append({'version' : ver}) #dig in and loop into versions
+#     return  json.dumps(y)
 
 
-def BlobVersionsGetAuthN(host,container,namespace,name,provider):   
-    token_credential = DefaultAzureCredential()
-    name_start = f"v1/modules/{namespace}/{name}/{provider}"
-    container_client = ContainerClient(host, container, credential=token_credential)
-    blobs_list = container_client.list_blobs(name_starts_with=name_start)
-    x = '{"modules": [{"versions": []}]}'
-    y =  json.loads(x)  #turn string above json python object
-    for module in y['modules']:
-        for blob in blobs_list:
-            ver = (re.search(r'[0-9].[0-9].[0-9]', blob.name).group())
-            module['versions'].append({'version' : ver}) #dig in and loop into versions
-    return  json.dumps(y)
+
 
 # def BlobDownloadAuthN(namespace, name,provider,version,blobpath):
 

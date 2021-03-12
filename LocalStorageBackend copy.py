@@ -16,17 +16,7 @@ def versions(namespace, name,provider):
     filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/"
     if not path.exists(filepath):
         abort(404)
-    
-    x = '''
-    {
-        "modules": [
-        {
-                "versions": [
-                ]
-        }
-        ]
-    }
-    '''
+    x = '{"modules": [{"versions": []}]}'
     y =  json.loads(x)  #turn string above json python object
     data = versiongetter.folderlist(filepath) #get all the directories (the version folders)
     for module in y['modules']:
