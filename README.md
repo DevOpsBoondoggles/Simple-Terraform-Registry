@@ -1,4 +1,4 @@
-# TerraformRegistry
+# Simple Terraform Registry
 First bash at making a Terraform Private Module Registry with either local or Azure Blob Storage backend.
 
 This is written in Python by very much a novice.
