@@ -90,6 +90,7 @@ If you're going local, no problem, deploy the above to a webapp (you can fork an
 
 ![image](https://user-images.githubusercontent.com/25871665/111052022-49c71a00-844f-11eb-821c-72e5fc9135ab.png)
 
+Since what backend it's using is done though config, you can deploy it using local storage to test, then just add the config into the webapp to connect up the Azure Blob Storage. (Restart the app after the variables)
 
 If you're doing Blob Storage as backend, as well as doing the environment variable options above, you need to give your Web App a system assigned managed identity and also give it (and yourself!) the role of Storage Blob Data Reader on the storage account you want to host the files in and make sure that it's set to Azure AD auth. 
 See the following pictures. 
