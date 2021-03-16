@@ -2,3 +2,5 @@ Flask>=1.0,<=1.1.2
 Requests==2.25.1
 azure.storage.blob>=12.8.0
 azure.identity>=1.5.0
+Jinja2>=1.1.1
+Flask-Misaka>=1.0.0

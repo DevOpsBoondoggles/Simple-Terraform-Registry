@@ -1,8 +1,20 @@
 import json
 import os
-from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file, redirect
+from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file, redirect,render_template
 from os import path
-app = Flask(__name__)
+from flask_misaka import markdown,Misaka
+
+app = Flask(__name__, template_folder="views")
+Misaka(app)
+
+content = ""
+with open('testmisaka.md', 'r') as f:
+    content = f.read()
+content2 = markdown("A *simple* example.")
+
+@app.route("/")
+def index():
+    return render_template('index.html', text=content2)
 
 #set your backend
 modulebackend = os.environ.get("MODULEBACKEND") #azureblob or blank
