@@ -4,34 +4,12 @@ from flask import Flask, abort,current_app, flash, jsonify, make_response, send_
 from os import path
 from flask_misaka import markdown,Misaka
 
-
-
 ##### this is the Template jinja stuff for the webpage
 app = Flask(__name__, template_folder="views")
 ### need this line for the Misaka markdown rendering
 Misaka(app)
-from LocalStorageBackend import folderlist
-
-def get_readmes():
-    filepath = './v1/modules/unittest/VersionGet/azurerm/'
-    content3 = str(((folderlist(filepath))))
-    with open('testmisaka.md', 'r') as f:
-        content = f.read()
-    return content3
-
-@app.route("/", methods=['GET'])
-def index():
-    return render_template("index.html",text=get_readmes())
-
-#Renders the Readme.md from the verion folder
-@app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/', methods=['GET'])
-def load_readme(namespace, name,provider,version):
-    filepath = f'./v1/modules/{namespace}/{name}/{provider}/{version}'
-    with open(f'{filepath}/readme.md', 'r') as f:
-        content = f.read()
-    return render_template("modules.html",text=content)
     
-####### end of the root page
+
 #set your backend
 modulebackend = os.environ.get("MODULEBACKEND") #azureblob or blank
 
@@ -49,7 +27,25 @@ if modulebackend == 'azureblob':
         if not envvar:
             raise ValueError(f'missing Azure environment variable')
 else:
-    from LocalStorageBackend import VersionGet,DownloadFile,XHeader
+    from LocalStorageBackend import VersionGet,DownloadFile,XHeader,folderlist
+
+
+def get_modulesmd(filepath):
+    content = str(((folderlist(filepath))))
+    return content
+
+@app.route("/", methods=['GET'])
+def index():
+    filepath = f'./v1/modules/'
+    return render_template("index.html",text=get_modulesmd(filepath))
+
+#Renders the Readme.md from the verion folder
+@app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/', methods=['GET'])
+def load_readme(namespace, name,provider,version):
+    filepath = f'./v1/modules/{namespace}/{name}/{provider}/{version}'
+    with open(f'{filepath}/readme.md', 'r') as f:
+        content = f.read()
+    return render_template("modules.html",text=content, title=f'Readme for {namespace}/{name}/{provider}/{version}')
 
 #Service Discovery
 @app.route('/.well-known/terraform.json', methods=['GET'])
