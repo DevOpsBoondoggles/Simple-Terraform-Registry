@@ -31,13 +31,15 @@ else:
 
 
 def get_modulesmd(filepath):
-    content = str(((folderlist(filepath))))
+    content = list(((folderlist(filepath))))
     return content
 
-@app.route("/", methods=['GET'])
+
+@app.route('/')
 def index():
     filepath = f'./v1/modules/'
-    return render_template("index.html",text=get_modulesmd(filepath))
+    return render_template('index.html',modules=get_modulesmd(filepath))
+
 
 #Renders the Readme.md from the verion folder
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/', methods=['GET'])

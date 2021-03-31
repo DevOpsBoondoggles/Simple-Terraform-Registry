@@ -1,9 +1,19 @@
 <!doctype html>
 <html>
   <head>
-    <title>My Markdown blogging site</title>
+    <title>Modules</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   </head>
   <body>
-    {{ text|markdown }}
+<!--CONTAINER-->
+<div class="container">
+  <p>Here are our Modules</p>
+  <ul class="collection with-header">
+      <li class="collection-header"><h4><b>Header {{ list_header }}</b></h4></li>
+      {% for module in modules %}
+          <li class="collection-item"><a href="#">{{ module }}</a></li>
+      {% endfor %}
+  </ul>
+</div>
   </body>
 </html>
