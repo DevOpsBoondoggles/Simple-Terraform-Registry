@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Simple Terraform Registry</title>
+    <title>Modules</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap.min.css') }}">
   </head>
   <body>
@@ -18,9 +18,12 @@
 <section class="py-3 text-center container">
   <div class="row py-lg-3">
     <div class="col-lg-6 col-md-8 mx-auto">
-      <h1 class="fw-light">Here are your Modules</h1>
-      <p class="lead text-muted">List of the Namespaces for Terraform modules</p>
-
+      <h1 class="fw-light">Here are our modules</h1>
+      <p class="lead text-muted">List of the modules for Terraform</p>
+      <!-- <p>
+        <a href="#" class="btn btn-primary my-2">Main call to action</a>
+        <a href="#" class="btn btn-secondary my-2">Secondary action</a>
+      </p> -->
     </div>
   </div>
 </section>
@@ -32,13 +35,15 @@
       {% for module in modules %}
       <div class="col">
         <div class="card shadow-sm">
+          <!-- <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg> -->
+
           <div class="card-body">
             <h5 class="card-title">{{ module }}</h5>
-            <p class="card-text">Synopsis of the Namespace needed</p>
-            <p>
-              <a href="{{ filepath }}{{ module}}" class="btn btn-primary my-2">See Modules</a>
-            </p> 
+            <p class="card-text">Synopsis of the Module needed</p>
             <div class="d-flex justify-content-between align-items-center">
+              <div class="btn-group">
+                <a href="{{ module }}" class="btn btn-outline-primary">See Providers</a>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,4 @@
 import json
-import versiongetter
 from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file#, redirect, request, url_for
 from os import path
 import os
@@ -9,8 +8,8 @@ def folderlist(filepath):
     dirOnly = []
     for dir in dirList:
         dirPath = f'{filepath}/{dir}'
-        if path.isdir(dirPath) == True:
-            if not dir.startswith("."): 
+        if path.isdir(dirPath) == True: #remove any files from the list
+            if not dir.startswith("."): #list all the folders that don't start with . 
                 dirOnly.append(dir)
     return dirOnly
 
@@ -28,7 +27,7 @@ def VersionGet(namespace,name,provider):
 
 def XHeader(namespace, name,provider,version):
     filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/" + version  + "/" + "local.zip"
-    file = f'./local.zip'
+    file = f'./local.zip' #it would be good to give other options for the file container
     response = make_response('', 204 )
     response.mimetype = current_app.config['JSONIFY_MIMETYPE']
     response.headers['X-Terraform-Get'] = file

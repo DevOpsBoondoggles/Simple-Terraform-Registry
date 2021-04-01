@@ -7,15 +7,15 @@ from flask_misaka import markdown,Misaka
 ##### this is the Template jinja stuff for the webpage
 app = Flask(__name__, template_folder="views")
 ### need this line for the Misaka markdown rendering
-Misaka(app)
-    
+Misaka(app,fenced_code="true")
 
-#set your backend
+
+#set your backend using environment variables
 modulebackend = os.environ.get("MODULEBACKEND") #azureblob or blank
 
 #check and import pieces for azure blob storage
 if modulebackend == 'azureblob':
-    #These need set if you're using azure backend 
+    #These need set if you're using azure backend
     azblobaccountname = os.environ.get("AZBLOBACCOUNTNAME") #blobaccount
     azblobstoragehost = os.environ.get("AZBLOBSTORAGEHOST") #the full url "https://blobaccount.blob.core.windows.net"
     azcontainer = os.environ.get("AZCONTAINER") #container where the modules are
@@ -30,7 +30,7 @@ else:
     from LocalStorageBackend import VersionGet,DownloadFile,XHeader,folderlist
 
 
-def get_modulesmd(filepath):
+def get_namespaceslocal(filepath):
     content = list(((folderlist(filepath))))
     return content
 
@@ -38,8 +38,26 @@ def get_modulesmd(filepath):
 @app.route('/')
 def index():
     filepath = f'./v1/modules/'
-    return render_template('index.html',modules=get_modulesmd(filepath))
+    namespaces = get_namespaceslocal(filepath)
+    return render_template('index.html',modules=namespaces, filepath=filepath)
 
+@app.route('/v1/modules/<namespace>/', methods=['GET'])
+def namespaceselect(namespace):
+    filepath = f'./v1/modules/{namespace}'
+    namespaces = get_namespaceslocal(filepath)
+    return render_template('namespace.html',modules=namespaces, filepath=filepath)
+
+@app.route('/v1/modules/<namespace>/<name>/', methods=['GET'])
+def moduleselect(namespace,name):
+    filepath = f'./v1/modules/{namespace}/{name}'
+    namespaces = get_namespaceslocal(filepath)
+    return render_template('modules.html',modules=namespaces, filepath=filepath)
+
+@app.route('/v1/modules/<namespace>/<name>/<provider>/', methods=['GET'])
+def providerselect(namespace,name,provider):
+    filepath = f'./v1/modules/{namespace}/{name}/{provider}'
+    namespaces = get_namespaceslocal(filepath)
+    return render_template('provider.html',modules=namespaces, filepath=filepath)
 
 #Renders the Readme.md from the verion folder
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/', methods=['GET'])
@@ -47,7 +65,7 @@ def load_readme(namespace, name,provider,version):
     filepath = f'./v1/modules/{namespace}/{name}/{provider}/{version}'
     with open(f'{filepath}/readme.md', 'r') as f:
         content = f.read()
-    return render_template("modules.html",text=content, title=f'Readme for {namespace}/{name}/{provider}/{version}')
+    return render_template("readme.html",text=content, title=f'Readme for {namespace}/{name}/{provider}/{version}')
 
 #Service Discovery
 @app.route('/.well-known/terraform.json', methods=['GET'])
@@ -67,7 +85,7 @@ def get_versions(namespace, name,provider):
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/download', methods=['GET'])
 def download_version(namespace, name,provider,version):
     return XHeader(namespace, name,provider,version)
-    
+
 #need to actually send the file
 @app.route('/v1/modules/<namespace>/<name>/<provider>/<version>/local.zip', methods=['GET'])
 def download_file(namespace, name,provider,version):
