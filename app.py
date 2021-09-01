@@ -22,12 +22,13 @@ if modulebackend == 'azureblob':
     from azure.storage.blob import BlobClient,ContainerClient
     from azure.identity import DefaultAzureCredential
     from AzureBlobBackend import VersionGet,DownloadFile,XHeader
+    from AzureBlobGUI import *
     az_env_variables = [azblobstoragehost,azblobaccountname,azcontainer]
     for envvar in az_env_variables:
         if not envvar:
             raise ValueError(f'missing Azure environment variable')
 else:
-    from LocalStorageBackend import VersionGet,DownloadFile,XHeader,folderlist
+    from LocalStorageBackend import VersionGet,DownloadFile,XHeader
     from LocalStorageGUI import *
 
 

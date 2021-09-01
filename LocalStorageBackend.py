@@ -1,5 +1,5 @@
 import json
-from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file#, redirect, request, url_for
+from flask import abort,current_app, make_response, send_file
 from os import path
 import os
 
@@ -27,10 +27,10 @@ def VersionGet(namespace,name,provider):
 
 def XHeader(namespace, name,provider,version):
     filepath = './v1/modules/' + namespace + "/" + name + "/" + provider + "/" + version  + "/" + "local.zip"
-    file = f'./local.zip' #it would be good to give other options for the file container
+    file = f'./local.zip' #it would be good to give other options for the file container rather just a zip called local
     response = make_response('', 204 )
     response.mimetype = current_app.config['JSONIFY_MIMETYPE']
-    response.headers['X-Terraform-Get'] = file
+    response.headers['X-Terraform-Get'] = file #this is the header terraform looks for to know where the file is
     return response
 
 #need to actually download the file when called by Terraform.
