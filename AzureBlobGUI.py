@@ -17,11 +17,19 @@ def ModuleslistGui(host,container):
     token_credential = DefaultAzureCredential()
     filepath = f"v1/modules/"
     container_client = ContainerClient(host, container, credential=token_credential)
-    blobs_list = container_client.list_blobs() #name_starts_with=filepath
+    blobs_list = container_client.list_blobs(name_starts_with=filepath) #
     x = []
+    start = len(filepath) #get the end of the standard path. start of the module name
+    #e.g. 'v1/modules/unittest/versionget/azurerm/1.0.0/local.zip'
     for blob in blobs_list:
-        x.append(blob.name) #dig in and loop into versions
-    return  x
+        #this whole shenanigans is to loop through the blob names and strip out the part needed
+        total = len(blob.name) #blob has multiple attributes so we specify name
+        stringback = blob.name[start:total]  #e.g. 'unittest/versionget/azurerm/1.0.0/local.zip'
+        end = stringback.index('/') #find first / 'unittest/ <<<<<<'
+        word = stringback[0:end] #go from start of stripped string to the first / 'unittest'
+        x.append(word) #dig in and loop into versions
+    unique = list(dict.fromkeys(x))#this bit basically makes a dictionary to get only unique values and then converts back to a list
+    return render_template('index.html',modules=unique, filepath=filepath)
 
 
 @app.route('/') # to list all the module namespaces 
@@ -29,4 +37,3 @@ def index():
    # filepath = f'./v1/modules/'
     namespaces = ModuleslistGui(azblobstoragehost,azcontainer)
     return f'{namespaces}'
-    #return render_template('index.html',modules=namespaces, filepath=filepath)
