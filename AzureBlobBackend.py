@@ -33,7 +33,7 @@ def ListNamespaces(host,container,namespace,name,provider):
     return  json.dumps(y)
 
 def XHeader(namespace, name,provider,version):
-    blobpath = f'/v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
+    blobpath = f'v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
     response = make_response('', 204 )
     response.mimetype = current_app.config['JSONIFY_MIMETYPE']
     response.headers['X-Terraform-Get'] = blobpath
