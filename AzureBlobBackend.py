@@ -42,6 +42,7 @@ def XHeader(namespace, name,provider,version):
 
 def DownloadFile(host,account,container,namespace, name,provider,version):
     blob = f'v1/modules/{namespace}/{name}/{provider}/{version}/local.zip'
+    host = host.rstrip('/') #in case the output has a / already
     bloburl = f'{host}/{container}/{blob}'
     azblobaccount = '' #need a way to pull this from the host
     token_credential = DefaultAzureCredential()
