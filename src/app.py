@@ -1,8 +1,8 @@
 import json
 import os
-from flask import Flask, abort,current_app, flash, jsonify, make_response, send_file, redirect,render_template
+from flask import Flask, redirect
 from os import path
-from flask_misaka import markdown,Misaka
+from flask_misaka import Misaka
 
 ##### this is the Template jinja stuff for the webpage
 app = Flask(__name__, template_folder="views")
@@ -60,3 +60,7 @@ def download_file(namespace, name,provider,version):
         return redirect(DownloadFile(azblobstoragehost,azblobaccountname,azcontainer, namespace,name,provider,version))
     else:
         return DownloadFile(namespace, name,provider,version)
+if os.environ.get("ISCONTAINER"):
+    app.run(host='0.0.0.0', port=80)
+else:
+    app.run()
