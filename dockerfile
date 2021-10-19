@@ -1,5 +1,5 @@
 #Download Python from DockerHub and use it
-FROM python:3.7.4
+FROM python:3
 
 #Set the working directory in the Docker container
 WORKDIR /code
