@@ -1,12 +1,22 @@
-#this is actually powershell not bash
+##name of resource group and aks cluster and location
 $name = "aksaadrbacvnet"
 $location = "uksouth"
 
+##cluster admin usergroup creation and id of the cluster admin
 az group create -l $location -n $name
+$clusteradminuser = "gabriel@cloudkingdoms.com"
+$clusteradminuserid = az ad user show --id $clusteradminuser --query objectId --output tsv
 
+$clusteradmingroupname = "AKSclusteradmins"
+$clusteradmingroupid = az ad group create  --display-name $clusteradmingroupname --mail-nickname $clusteradmingroupname --description "admin group for AKS clusters" --query objectId --output tsv
+az ad group member add --group $clusteradmingroupid --member-id $clusteradminuserid 
+
+
+##create cluster, including cluster admin assign group
 az aks create `
     --resource-group $name `
     --location $location `
+    --aad-admin-group-object-ids $clusteradmingroupid `
     --name $name `
     --load-balancer-sku standard `
     --enable-managed-identity `
@@ -28,17 +38,5 @@ az aks create `
 # $superadmin = "gabriel@cloudconfusion.co.uk"
 # az role assignment create --role "Azure Kubernetes Service RBAC Cluster Admin" --assignee $superadmin --scope $AKS_ID
 
-# create namespaces, create secrets, deploy yamls
-
-az aks get-credentials -g teamResources --name $name
-kubectl create namespace api
-kubectl create namespace web
-
-kubectl create secret generic newcreds --namespace api --from-literal=SQL_USER="sqladmintDv9504" --from-literal=SQL_PASSWORD="Y9^6Ag%8bu"  --from-literal=SQL_SERVER='sqlservertdv9504.database.windows.net'  --from-literal=SQL_DBNAME='mydrivingDB'
-
-kubectl apply -f poi.yaml
-kubectl apply -f trips.yaml
-kubectl apply -f tripviewer.yaml
-kubectl apply -f user-java.yaml
-kubectl apply -f userprofile.yaml
+az aks get-credentials -g $name --name $name
 
