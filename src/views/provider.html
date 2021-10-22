@@ -2,18 +2,10 @@
 <html>
   <head>
     <title>Modules</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css',_external=True,_scheme='https') }}">
   </head>
   <body>
-<!--CONTAINER-->
-<!-- <div class="container">
-  <ul class="collection with-header">
-      <li class="collection-header"><h4><b>Header {{ list_header }}</b></h4></li>
-      {% for module in modules %}
-          <li class="collection-item"><a href="#">{{ module }}</a></li>
-      {% endfor %}
-  </ul>
-</div> -->
+
 
 <section class="py-3 text-center container">
   <div class="row py-lg-3">

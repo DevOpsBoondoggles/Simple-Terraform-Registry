@@ -1,0 +1,20 @@
+--- ##don't need any of this is you're using the cert manager ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-terraform-registry
+  namespace: api
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: simple-terraform-registry
+            port:
+              name: http

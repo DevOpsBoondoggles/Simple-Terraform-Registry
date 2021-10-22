@@ -40,3 +40,30 @@ az aks create `
 
 az aks get-credentials -g $name --name $name
 
+#nginx install
+kubectl.exe apply -f .\kube\ingress\nginxingress.yml
+#nginx install (where got it from)
+kubectl.exe apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/cloud/deploy.yaml
+
+#wait for the public IP to come for DNS 
+$IP = (kubectl.exe get service ingress-nginx-controller --namespace ingress-nginx --output=json |ConvertFrom-Json).status.loadBalancer.ingress.ip
+# Name to associate with public IP address
+$DNSNAME="terraform-reg-gm"
+# Get the resource-id of the public ip
+$PUBLICIPID=$(az network public-ip list --query "[?ipAddress!=null]|[?contains(ipAddress, '$IP')].[id]" --output tsv)
+# Update public ip address with DNS nv
+az network public-ip update --ids $PUBLICIPID --dns-name $DNSNAME
+# Display the FQDN
+az network public-ip show --ids $PUBLICIPID --query "[dnsSettings.fqdn]" --output tsv
+#cert manager
+https://artifacthub.io/packages/helm/cert-manager/cert-manager
+kubectl.exe create namespace cert-manager
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.4/cert-manager.crds.yaml
+helm repo add jetstack https://charts.jetstack.io
+helm install certmanageraks jetstack/cert-manager `
+--namespace cert-manager `
+--version v1.5.4  `
+--set installCRDs=true `
+--set nodeSelector."kubernetes\.io/os"=linux 
+
+kubectl.exe apply -f .\kube\cert-manager\clusterissueraks.yaml

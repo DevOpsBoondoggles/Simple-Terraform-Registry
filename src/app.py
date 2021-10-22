@@ -10,6 +10,7 @@ app = Flask(__name__, template_folder="views")
 Misaka(app,fenced_code="true")
 
 
+
 #set your backend using environment variables
 modulebackend = os.environ.get("MODULEBACKEND") #azureblob or blank
 
@@ -60,7 +61,9 @@ def download_file(namespace, name,provider,version):
         return redirect(DownloadFile(azblobstoragehost,azblobaccountname,azcontainer, namespace,name,provider,version))
     else:
         return DownloadFile(namespace, name,provider,version)
+
 if os.environ.get("ISCONTAINER"):
     app.run(host='0.0.0.0', port=80)
 else:
-    app.run()
+    if __name__ == "__main__":
+        app.run()
