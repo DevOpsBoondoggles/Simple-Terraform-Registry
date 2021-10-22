@@ -41,9 +41,9 @@ az aks create `
 az aks get-credentials -g $name --name $name
 
 #nginx install
-kubectl.exe apply -f .\kube\ingress\nginxingress.yml
+kubectl.exe apply -f .\kube\ingress\nginxingress.yaml
 #nginx install (where got it from)
-kubectl.exe apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/cloud/deploy.yaml
+#kubectl.exe apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/cloud/deploy.yaml
 
 #wait for the public IP to come for DNS 
 $IP = (kubectl.exe get service ingress-nginx-controller --namespace ingress-nginx --output=json |ConvertFrom-Json).status.loadBalancer.ingress.ip
@@ -53,8 +53,7 @@ $DNSNAME="terraform-reg-gm"
 $PUBLICIPID=$(az network public-ip list --query "[?ipAddress!=null]|[?contains(ipAddress, '$IP')].[id]" --output tsv)
 # Update public ip address with DNS nv
 az network public-ip update --ids $PUBLICIPID --dns-name $DNSNAME
-# Display the FQDN
-az network public-ip show --ids $PUBLICIPID --query "[dnsSettings.fqdn]" --output tsv
+
 #cert manager
 https://artifacthub.io/packages/helm/cert-manager/cert-manager
 kubectl.exe create namespace cert-manager
@@ -63,7 +62,13 @@ helm repo add jetstack https://charts.jetstack.io
 helm install certmanageraks jetstack/cert-manager `
 --namespace cert-manager `
 --version v1.5.4  `
---set installCRDs=true `
 --set nodeSelector."kubernetes\.io/os"=linux 
+#  --set installCRDs=true ` don't need this because of installing it seprate. 
+#the above sometimes seems to hang the window and needs some returns to shake free
 
-kubectl.exe apply -f .\kube\cert-manager\clusterissueraks.yaml
+kubectl.exe apply -f .\kube\app.yaml
+kubectl.exe apply -f .\kube\cert-manager\certclusterissuerandingress.yaml
+kubectl.exe get cert --all-namespaces  #wait for it to switch to true
+then go here
+# Display the FQDN
+az network public-ip show --ids $PUBLICIPID --query "[dnsSettings.fqdn]" --output tsv
