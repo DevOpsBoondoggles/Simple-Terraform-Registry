@@ -14,11 +14,11 @@ resource "azurerm_storage_container" "tfreg-wa-sac" {
 
 }
 
-# resource "azurerm_role_assignment" "funccode_sa_ev" { #giving permissions to the aks to read the contents of the storage account
-#   scope                = azurerm_storage_account.tfreg-wa-sa.id
-#   role_definition_name = "Storage Blob Data Reader"
-#   principal_id         = azurerm_app_service.tfreg-wa-as.identity[0].principal_id
-# }
+resource "azurerm_role_assignment" "funccode_sa_ev" { #giving permissions to the aks to read the contents of the storage account
+  scope                = azurerm_storage_account.tfreg-wa-sa.id
+  role_definition_name = "Storage Blob Data Reader"
+  principal_id         = azurerm_kubernetes_cluster.k8s.identity[0].principal_id
+}
 
 
 

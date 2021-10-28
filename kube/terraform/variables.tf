@@ -3,6 +3,24 @@ variable "name" {
   default = "tfregkubeblob"
 }
 
+variable "aksadmingroup" {
+  description = "The Object Id of the managementgroup"
+  default = ["ae5eddda-e90e-40c8-bb75-e9b05ac73728"]
+  type = set(string)
+}
+
+variable "aksadmingroupname" {
+  description = "The name of the managementgroup"
+  default = "akscluseradmintf"
+  type = string
+}
+
+variable "aksadminusers" {
+  description = "The User Principal Name (email address) of the admin users"
+  default = ["gabriel@cloudkingdoms.com"]
+  type = set(string)
+}
+
 variable "location" {
   default = "uksouth"
   type    = string
@@ -14,25 +32,13 @@ variable "modulebackend" {
   description = "This is where terraform modules will be kept, azureblob or local to the webapp "
 }
 
-variable "sourcecontrol_repo_url" {
-  default     = "https://github.com/gabrielmccoll/Simple-Terraform-Registry.git"
-  type        = string
-  description = "This is where the files to deploy the app are kept "
-}
-
-variable "sourcecontrol_branch" {
-  default     = "main"
-  type        = string
-  description = "This is the branch of the sourcecontrol_repo_url to use"
-}
 
 
 variable "tags" {
   default = {
     "AppID"        = "tfreg"
-    "BusinessUnit" = "myunit"
     "Environment"  = "development"
-    "Owner"        = "jonnymarvello"
+    "Owner"        = "gabrielmccoll"
   }
 }
 
@@ -54,12 +60,3 @@ variable "testblobsource" {
 }
 
 
-variable "webappskutier" {
-  default = "Basic"
-  description = "Basic, Free, Standard, Premium"
-}
-
-variable "webapskusize" {
-  default = "B1"
-  description = "F1, B1,B2, S1 and so on "
-}
