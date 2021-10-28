@@ -2,10 +2,14 @@
 $name = "aksaadrbacvnet"
 $location = "uksouth"
 
+
+
 ##cluster admin usergroup creation and id of the cluster admin
 az group create -l $location -n $name
 $clusteradminuser = "gabriel@cloudkingdoms.com"
 $clusteradminuserid = az ad user show --id $clusteradminuser --query objectId --output tsv
+
+
 
 $clusteradmingroupname = "AKSclusteradmins"
 $clusteradmingroupid = az ad group create  --display-name $clusteradmingroupname --mail-nickname $clusteradmingroupname --description "admin group for AKS clusters" --query objectId --output tsv
