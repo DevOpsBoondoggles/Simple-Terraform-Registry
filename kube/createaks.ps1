@@ -1,5 +1,5 @@
 ##name of resource group and aks cluster and location
-$name = "aksaadrbacvnet"
+$name = "tfregkubeblob"
 $location = "uksouth"
 
 
